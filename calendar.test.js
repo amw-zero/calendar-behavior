@@ -17,9 +17,8 @@ let makeCalendarShell = () => {
 };
 
 let addEvent = (calendarShell, name, date) => {
-  let dateComponent = _.split(date, ', ')[0];
-  let events = calendarShell.events[dateComponent] || []
-  calendarShell.events[dateComponent] = [...events, eventFrom(name, date)]
+  let events = calendarShell.events[date] || []
+  calendarShell.events[date] = [...events, eventFrom(name, date)]
 };
 
 let viewCalendar = (calendarShell) => {
@@ -33,10 +32,11 @@ let commands = { addEvent, viewCalendar };
 
 test('adding event', () => {
   let calendarShell = makeCalendarShell();
+  let date = '9/26/19, 12:30pm';
 
-  commands.addEvent(calendarShell, 'Test Event', '9/26/19, 12:30pm');
+  commands.addEvent(calendarShell, 'Test Event', date);
 
-  let event = calendarShell.events['9/26/19'][0];
+  let event = calendarShell.events[date][0];
   expect(event.name).toBe('Test Event');
   expect(event.date).toBe('9/26/19, 12:30pm');
 });
@@ -44,14 +44,15 @@ test('adding event', () => {
 test('adding multiple events at same time', () => {
   let calendarShell = makeCalendarShell();
 
-  commands.addEvent(calendarShell, 'TestEvent1', '9/26/19, 12:30pm');
-  commands.addEvent(calendarShell, 'TestEvent2', '9/26/19, 12:30pm');
+  let date = '9/26/19, 12:30pm';
+  commands.addEvent(calendarShell, 'TestEvent1', date);
+  commands.addEvent(calendarShell, 'TestEvent2', date);
 
   console.log("calendar shell");
   console.log(calendarShell);
 
-  expect(calendarShell.events['9/26/19'][0].name).toBe('TestEvent1');
-  expect(calendarShell.events['9/26/19'][1].name).toBe('TestEvent2');
+  expect(calendarShell.events[date][0].name).toBe('TestEvent1');
+  expect(calendarShell.events[date][1].name).toBe('TestEvent2');
 });
 
 test('viewing calendar', () => {
