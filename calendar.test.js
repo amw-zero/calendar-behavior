@@ -8,10 +8,6 @@ let dateAt = (idx, calendarShell) => {
   return calendarShell.events[idx].date;
 };
 
-let addEventArray = (calendarShell, name, date) => {
-  calendarShell.events.push({ name, date });
-};
-
 let eventFrom = (name, date) => {
   return { name, date };
 };
@@ -33,15 +29,16 @@ let viewCalendar = (calendarShell) => {
   });
 };
 
-let commands = { addEvent, addEventArray, viewCalendar };
+let commands = { addEvent, viewCalendar };
 
 test('adding event', () => {
-  let calendarShell = { events: [] };
+  let calendarShell = makeCalendarShell();
 
-  commands.addEventArray(calendarShell, 'Test Event', '9/26/19, 12:30pm');
+  commands.addEvent(calendarShell, 'Test Event', '9/26/19, 12:30pm');
 
-  expect(eventNameAt(0, calendarShell)).toBe('Test Event');
-  expect(dateAt(0, calendarShell)).toBe('9/26/19, 12:30pm');
+  let event = calendarShell.events['9/26/19'][0];
+  expect(event.name).toBe('Test Event');
+  expect(event.date).toBe('9/26/19, 12:30pm');
 });
 
 test('adding multiple events at same time', () => {
