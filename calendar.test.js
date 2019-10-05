@@ -1,4 +1,3 @@
-// var _ = require('lodash');
 import { expect } from 'chai';
 import commands, { makeCalendarShell } from './mod.mjs';
 
