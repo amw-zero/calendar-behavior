@@ -15,5 +15,7 @@
   },
   "dependencies": {
     "lodash": "^4.17.15"
-  }
+  },
+  "name": "calendar-behavior",
+  "version": "0.1.0"
 }
