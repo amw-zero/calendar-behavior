@@ -1,4 +1,6 @@
-var _ = require('lodash');
+// var _ = require('lodash');
+// import { test } from 'lodash';
+import commands, { makeCalendarShell } from './mod.mjs';
 
 let eventNameAt = (idx, calendarShell) => {
   return calendarShell.events[idx].name;
@@ -7,28 +9,6 @@ let eventNameAt = (idx, calendarShell) => {
 let dateAt = (idx, calendarShell) => {
   return calendarShell.events[idx].date;
 };
-
-let eventFrom = (name, date) => {
-  return { name, date };
-};
-
-let makeCalendarShell = () => { 
-  return { events: { } }
-};
-
-let addEvent = (calendarShell, name, date) => {
-  let events = calendarShell.events[date] || []
-  calendarShell.events[date] = [...events, eventFrom(name, date)]
-};
-
-let viewCalendar = (calendarShell) => {
-  calendarShell.events.push({
-    name: 'Test Event',
-    date: '9/26/19, 12:30pm'
-  });
-};
-
-let commands = { addEvent, viewCalendar };
 
 test('adding event', () => {
   let calendarShell = makeCalendarShell();

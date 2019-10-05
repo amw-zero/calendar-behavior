@@ -3,7 +3,7 @@
     "jest": "^24.9.0"
   },
   "scripts": {
-    "test": "jest"
+    "test": "node --experimental-modules node_modules/.bin/jest"
   },
   "dependencies": {
     "lodash": "^4.17.15"
