@@ -1,5 +1,5 @@
 // var _ = require('lodash');
-// import { test } from 'lodash';
+import { expect } from 'chai';
 import commands, { makeCalendarShell } from './mod.mjs';
 
 let eventNameAt = (idx, calendarShell) => {
@@ -10,35 +10,38 @@ let dateAt = (idx, calendarShell) => {
   return calendarShell.events[idx].date;
 };
 
-test('adding event', () => {
-  let calendarShell = makeCalendarShell();
-  let date = '9/26/19, 12:30pm';
+describe('adding event', () => {
+  it('adds', () => {
+    let calendarShell = makeCalendarShell();
+    let date = '9/26/19, 12:30pm';
 
-  commands.addEvent(calendarShell, 'Test Event', date);
+    commands.addEvent(calendarShell, 'Test Event', date);
 
-  let event = calendarShell.events[date][0];
-  expect(event.name).toBe('Test Event');
-  expect(event.date).toBe('9/26/19, 12:30pm');
+    let event = calendarShell.events[date][0];
+    expect(event.name).to.eq('Test Event');
+    expect(event.date).to.eq('9/26/19, 12:30pm');
+  });
 });
 
-test('adding multiple events at same time', () => {
-  let calendarShell = makeCalendarShell();
+describe('adding multiple events at same time', () => {
+  it('adds both events to the same date', () => { 
+    let calendarShell = makeCalendarShell();
 
-  let date = '9/26/19, 12:30pm';
-  commands.addEvent(calendarShell, 'TestEvent1', date);
-  commands.addEvent(calendarShell, 'TestEvent2', date);
+    let date = '9/26/19, 12:30pm';
+    commands.addEvent(calendarShell, 'TestEvent1', date);
+    commands.addEvent(calendarShell, 'TestEvent2', date);
 
-  console.log("calendar shell");
-  console.log(calendarShell);
-
-  expect(calendarShell.events[date][0].name).toBe('TestEvent1');
-  expect(calendarShell.events[date][1].name).toBe('TestEvent2');
+    expect(calendarShell.events[date][0].name).to.eq('TestEvent1');
+    expect(calendarShell.events[date][1].name).to.eq('TestEvent2');
+  });
 });
 
-test('viewing calendar', () => {
-  let calendarShell = { events: [] };
+describe('viewing calendar', () => {
+  it('is viewed', () => {
+    let calendarShell = { events: [] };
 
-  commands.viewCalendar(calendarShell);
+    commands.viewCalendar(calendarShell);
 
-  expect(eventNameAt(0, calendarShell)).toBe('Test Event');
+    expect(eventNameAt(0, calendarShell)).to.eq('Test Event');
+  });
 });
