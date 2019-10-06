@@ -5,6 +5,7 @@
     "@babel/node": "^7.6.2",
     "@babel/preset-env": "^7.6.2",
     "@babel/register": "^7.6.2",
+    "alasql": "^0.5.1",
     "chai": "^4.2.0",
     "jest": "^24.9.0",
     "mocha": "^6.2.1",

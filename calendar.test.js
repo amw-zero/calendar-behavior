@@ -1,5 +1,6 @@
 import { expect } from 'chai';
-import commands, { makeCalendarShell } from './mod.mjs';
+import commands, { makeCalendarShell, makeSqlRepository, makeServer } from './mod.mjs';
+import alasql from 'alasql';
 
 let eventNameAt = (idx, calendarShell) => {
   return calendarShell.events[idx].name;
@@ -9,38 +10,85 @@ let dateAt = (idx, calendarShell) => {
   return calendarShell.events[idx].date;
 };
 
-describe('adding event', () => {
-  it('adds', async () => {
-    let calendarShell = makeCalendarShell();
-    let date = '9/26/19, 12:30pm';
+let memoryDatastore = {
+  setup(query) {
+    alasql(query);
+  },
+  execute(query) {
+    return alasql.promise(query);
+  }
+};
 
-    await commands.addEvent(calendarShell, 'Test Event', date);
+function makeTestCalendarShell(repository) {
+  return makeCalendarShell(makeServer(repository));
+}
 
-    let event = calendarShell.events[date][0];
-    expect(event.name).to.eq('Test Event');
-    expect(event.date).to.eq('9/26/19, 12:30pm');
+describe("calendar", () => {
+  let memorySqlRepository;
+  let errorSqlRepository
+
+  beforeEach(() => {
+    memorySqlRepository = makeSqlRepository(memoryDatastore);
+    memorySqlRepository.setup();
+    errorSqlRepository = {
+      setup() {
+        throw new Error("Fake error");
+      },
+      addEvent() {
+        throw new Error("Fake error");
+      }
+    }
   });
-});
 
-describe('adding multiple events at same time', () => {
-  it('adds both events to the same date', () => { 
-    let calendarShell = makeCalendarShell();
+  afterEach(() => {
+    alasql("DROP TABLE events");
+  })
 
-    let date = '9/26/19, 12:30pm';
-    commands.addEvent(calendarShell, 'TestEvent1', date);
-    commands.addEvent(calendarShell, 'TestEvent2', date);
+  describe('adding event successfully', () => {
+    it('adds the event', async () => {
+      let calendarShell = makeTestCalendarShell(memorySqlRepository);
+      let date = '9/26/19, 12:30pm';
 
-    expect(calendarShell.events[date][0].name).to.eq('TestEvent1');
-    expect(calendarShell.events[date][1].name).to.eq('TestEvent2');
+      await commands.addEvent(calendarShell, 'Test Event', date);
+
+      let event = calendarShell.events[date][0];
+      expect(event.name).to.eq('Test Event');
+      expect(event.date).to.eq('9/26/19, 12:30pm');
+    });
   });
-});
 
-describe('viewing calendar', () => {
-  it('is viewed', () => {
-    let calendarShell = { events: [] };
+  describe('adding event with error', () => {
+    it('does not add the event', async () => {
+      let calendarShell = makeTestCalendarShell(errorSqlRepository);
+      let date = '9/26/19, 12:30pm';
 
-    commands.viewCalendar(calendarShell);
+      await commands.addEvent(calendarShell, 'Test Event', date);
 
-    expect(eventNameAt(0, calendarShell)).to.eq('Test Event');
+      expect(calendarShell.events).to.deep.eq({});
+      expect(calendarShell.errors["addEventError"].message).to.eq("Fake error")
+    });
   });
+
+  describe('adding multiple events at same time', () => {
+    it('adds both events to the same date', async () => { 
+      let calendarShell = makeCalendarShell(memorySqlRepository);
+      let date = '9/26/19, 12:30pm';
+
+      await commands.addEvent(calendarShell, 'TestEvent1', date);
+      await commands.addEvent(calendarShell, 'TestEvent2', date);
+
+      expect(calendarShell.events[date][0].name).to.eq('TestEvent1');
+      expect(calendarShell.events[date][1].name).to.eq('TestEvent2');
+    });
+  });
+
+  describe('viewing calendar', () => {
+    it('is viewed', () => {
+      let calendarShell = { events: [] };
+
+      commands.viewCalendar(calendarShell);
+
+      expect(eventNameAt(0, calendarShell)).to.eq('Test Event');
+    });
+  })
 });

@@ -2,13 +2,22 @@ let eventFrom = (name, date) => {
   return { name, date };
 };
 
-let makeCalendarShell = () => { 
-  return { events: { } };
+let makeCalendarShell = (server = makeServer(makeSqlRepository({}))) => { 
+  return { 
+    events: { },
+    errors: { },
+    server
+  };
 };
 
 let addEvent = async (calendarShell, name, date) => {
-  let events = calendarShell.events[date] || [];
-  calendarShell.events[date] = [...events, eventFrom(name, date)];
+  try {
+    await calendarShell.server.addEvent(name, date);
+    let events = calendarShell.events[date] || [];
+    calendarShell.events[date] = [...events, eventFrom(name, date)];
+  } catch(err) {
+    calendarShell.errors["addEventError"] = err;
+  }
 };
 
 let viewCalendar = (calendarShell) => {
@@ -18,8 +27,29 @@ let viewCalendar = (calendarShell) => {
   });
 };
 
+let makeSqlRepository = (datastore) => {
+  return {
+    datastore,
+    setup() {
+      datastore.setup('CREATE TABLE events (id SERIAL PRIMARY KEY, name VARCHAR(255), date TIMESTAMP)');
+    },
+    addEvent(name, date) {
+      return datastore.execute('INSERT INTO events (name, date) VALUES (?, ?)', name, date);
+    }
+  };
+};
+
+let makeServer = (repository) => {
+  return {
+    repository,
+    addEvent(name, date) {
+      return repository.addEvent(name, date);
+    }
+  }
+}
+
 let commands = { addEvent, viewCalendar };
 
-export { makeCalendarShell };
+export { makeCalendarShell, makeSqlRepository, makeServer };
 
 export default commands;
