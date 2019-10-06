@@ -10,11 +10,11 @@ let dateAt = (idx, calendarShell) => {
 };
 
 describe('adding event', () => {
-  it('adds', () => {
+  it('adds', async () => {
     let calendarShell = makeCalendarShell();
     let date = '9/26/19, 12:30pm';
 
-    commands.addEvent(calendarShell, 'Test Event', date);
+    await commands.addEvent(calendarShell, 'Test Event', date);
 
     let event = calendarShell.events[date][0];
     expect(event.name).to.eq('Test Event');

@@ -3,12 +3,12 @@ let eventFrom = (name, date) => {
 };
 
 let makeCalendarShell = () => { 
-  return { events: { } }
+  return { events: { } };
 };
 
-let addEvent = (calendarShell, name, date) => {
-  let events = calendarShell.events[date] || []
-  calendarShell.events[date] = [...events, eventFrom(name, date)]
+let addEvent = async (calendarShell, name, date) => {
+  let events = calendarShell.events[date] || [];
+  calendarShell.events[date] = [...events, eventFrom(name, date)];
 };
 
 let viewCalendar = (calendarShell) => {
