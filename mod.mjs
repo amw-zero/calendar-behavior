@@ -45,11 +45,11 @@ let makeServer = (repository) => {
     addEvent(name, date) {
       return repository.addEvent(name, date);
     }
-  }
-}
+  };
+};
 
 let commands = { addEvent, viewCalendar };
 
-export { makeCalendarShell, makeSqlRepository, makeServer };
+export { makeCalendarShell, makeServer, makeSqlRepository };
 
 export default commands;
