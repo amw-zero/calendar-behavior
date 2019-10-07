@@ -34,7 +34,7 @@ let makeSqlRepository = (datastore) => {
       datastore.setup('CREATE TABLE events (id SERIAL PRIMARY KEY, name VARCHAR(255), date TIMESTAMP)');
     },
     addEvent(name, date) {
-      return datastore.execute('INSERT INTO events (name, date) VALUES (?, ?)', name, date);
+      return datastore.execute('INSERT INTO events (name, date) VALUES ($1, $2)', name, date);
     }
   };
 };
