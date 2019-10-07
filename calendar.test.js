@@ -90,5 +90,5 @@ describe("calendar", () => {
 
       expect(eventNameAt(0, calendarShell)).to.eq('Test Event');
     });
-  })
+  });
 });

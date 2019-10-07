@@ -12,7 +12,8 @@
     "nodemon": "^1.19.3"
   },
   "scripts": {
-    "test": "./node_modules/.bin/mocha --require @babel/register *test*"
+    "test": "mocha --require @babel/register *test*",
+    "build": "babel -o mod.babel.mjs mod.mjs"
   },
   "dependencies": {
     "lodash": "^4.17.15"
