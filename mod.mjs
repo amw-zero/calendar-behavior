@@ -1,3 +1,5 @@
+import _ from 'lodash';
+
 let eventFrom = (name, date) => {
   return { name, date };
 };
@@ -20,11 +22,9 @@ let addEvent = async (calendarShell, name, date) => {
   }
 };
 
-let viewCalendar = (calendarShell) => {
-  calendarShell.events.push({
-    name: 'Test Event',
-    date: '9/26/19, 12:30pm'
-  });
+let viewCalendar = async (calendarShell) => {
+  let events = await calendarShell.server.viewEvents();
+  calendarShell.events = _.groupBy(events, 'date');
 };
 
 let makeSqlRepository = (datastore) => {
@@ -34,7 +34,10 @@ let makeSqlRepository = (datastore) => {
       datastore.setup('CREATE TABLE events (id SERIAL PRIMARY KEY, name VARCHAR(255), date TIMESTAMP)');
     },
     addEvent(name, date) {
-      return datastore.execute('INSERT INTO events (name, date) VALUES ($1, $2)', name, date);
+      return datastore.execute(`INSERT INTO events (name, date) VALUES ('${name}', '${date}')`);
+    },
+    viewEvents() {
+      return datastore.execute("SELECT * FROM events");
     }
   };
 };
@@ -44,6 +47,9 @@ let makeServer = (repository) => {
     repository,
     addEvent(name, date) {
       return repository.addEvent(name, date);
+    },
+    viewEvents() {
+      return repository.viewEvents();
     }
   };
 };

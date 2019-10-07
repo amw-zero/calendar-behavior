@@ -2,14 +2,6 @@ import { expect } from 'chai';
 import commands, { makeCalendarShell, makeSqlRepository, makeServer } from './mod.mjs';
 import alasql from 'alasql';
 
-let eventNameAt = (idx, calendarShell) => {
-  return calendarShell.events[idx].name;
-};
-
-let dateAt = (idx, calendarShell) => {
-  return calendarShell.events[idx].date;
-};
-
 let memoryDatastore = {
   setup(query) {
     alasql(query);
@@ -83,12 +75,14 @@ describe("calendar", () => {
   });
 
   describe('viewing calendar', () => {
-    it('is viewed', () => {
-      let calendarShell = { events: [] };
+    it('is viewed', async () => {
+      let calendarShell = makeCalendarShell(memorySqlRepository);
+      let date = '10/07/1992, 12:00pm';
 
-      commands.viewCalendar(calendarShell);
+      await commands.addEvent(calendarShell, 'Persisted Event', date);
+      await commands.viewCalendar(calendarShell);
 
-      expect(eventNameAt(0, calendarShell)).to.eq('Test Event');
+      expect(calendarShell.events[date][0].name).to.eq('Persisted Event');
     });
   });
 });
