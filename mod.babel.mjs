@@ -3,7 +3,11 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.default = exports.makeServer = exports.makeSqlRepository = exports.makeCalendarShell = void 0;
+exports.default = exports.makeSqlRepository = exports.makeServer = exports.makeCalendarShell = void 0;
+
+var _lodash = _interopRequireDefault(require("lodash"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 let eventFrom = (name, date) => {
   return {
@@ -32,11 +36,9 @@ let addEvent = async (calendarShell, name, date) => {
   }
 };
 
-let viewCalendar = calendarShell => {
-  calendarShell.events.push({
-    name: 'Test Event',
-    date: '9/26/19, 12:30pm'
-  });
+let viewEvents = async calendarShell => {
+  let events = await calendarShell.server.viewEvents();
+  calendarShell.events = _lodash.default.groupBy(events, 'date');
 };
 
 let makeSqlRepository = datastore => {
@@ -48,7 +50,11 @@ let makeSqlRepository = datastore => {
     },
 
     addEvent(name, date) {
-      return datastore.execute('INSERT INTO events (name, date) VALUES ($1, $2)', name, date);
+      return datastore.execute(`INSERT INTO events (name, date) VALUES ('${name}', '${date}')`);
+    },
+
+    viewEvents() {
+      return datastore.execute("SELECT * FROM events");
     }
 
   };
@@ -62,6 +68,10 @@ let makeServer = repository => {
 
     addEvent(name, date) {
       return repository.addEvent(name, date);
+    },
+
+    viewEvents() {
+      return repository.viewEvents();
     }
 
   };
@@ -70,7 +80,7 @@ let makeServer = repository => {
 exports.makeServer = makeServer;
 let commands = {
   addEvent,
-  viewCalendar
+  viewEvents
 };
 var _default = commands;
 exports.default = _default;

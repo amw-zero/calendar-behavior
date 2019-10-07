@@ -22,7 +22,7 @@ let addEvent = async (calendarShell, name, date) => {
   }
 };
 
-let viewCalendar = async (calendarShell) => {
+let viewEvents = async (calendarShell) => {
   let events = await calendarShell.server.viewEvents();
   calendarShell.events = _.groupBy(events, 'date');
 };
@@ -54,7 +54,7 @@ let makeServer = (repository) => {
   };
 };
 
-let commands = { addEvent, viewCalendar };
+let commands = { addEvent, viewEvents };
 
 export { makeCalendarShell, makeServer, makeSqlRepository };
 

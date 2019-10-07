@@ -74,13 +74,13 @@ describe("calendar", () => {
     });
   });
 
-  describe('viewing calendar', () => {
+  describe('viewing all events', () => {
     it('is viewed', async () => {
       let calendarShell = makeCalendarShell(memorySqlRepository);
       let date = '10/07/1992, 12:00pm';
 
       await commands.addEvent(calendarShell, 'Persisted Event', date);
-      await commands.viewCalendar(calendarShell);
+      await commands.viewEvents(calendarShell);
 
       expect(calendarShell.events[date][0].name).to.eq('Persisted Event');
     });
