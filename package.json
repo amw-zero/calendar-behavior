@@ -16,7 +16,7 @@
     "build": "babel -o mod.babel.mjs mod.mjs"
   },
   "dependencies": {
-    "lodash": "^4.17.15"
+    "lodash": "^4.17.19"
   },
   "name": "calendar-behavior",
   "version": "0.1.0"
